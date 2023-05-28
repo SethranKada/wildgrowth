@@ -16,9 +16,6 @@ pub struct Cli {
     #[arg(short, long)]
     quiet: bool,
 
-    /// Which instance are you connecting to?
-    instance:String,
-
     #[command(subcommand)]
     command: Option<Commands>,
 }
