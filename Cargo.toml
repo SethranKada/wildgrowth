@@ -1,0 +1,21 @@
+[workspace]
+members = [
+	"api",
+	"server",
+	"web",
+	"desktop",
+	"mobile"
+]
+
+[workspace.package]
+edition = "2021"
+version = "0.1.0"
+authors = ["Caden Lee <CadenCLee@protonmail.com>"]
+homepage = "www.example.com"
+
+
+[workspace.dependencies]
+anyhow = "1.0.71"
+serde = { version = "1.0.163", features = ["derive"] }
+exitcode = "1.1.2"
+
