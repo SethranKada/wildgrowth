@@ -1,27 +1,21 @@
 [package]
 name = "api"
-authors.workspace = true
-version.workspace = true
 edition.workspace = true
+version.workspace = true
+authors.workspace = true
 repository.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
 default = ["user"]
-full = ["cli","net","data","net","user"]
-cli = ["dep:clap", "dep:is-terminal", "dep:indicatif"]
+full = ["net", "data", "net", "user"]
 net = []
 data = []
 user = []
 
 [dependencies]
-anyhow.workspace = true
-serde.workspace = true
-exitcode.workspace = true
-tokio = { version = "1.28.1", features = ["full", "tracing"] }
-iroh = { version = "0.4.1",default-features = false }
-clap = { version = "4.3.0", features = ["derive"], optional = true  }
+exitcode = "1.1.2"
+serde = { version = "1.0.163", features = ["derive"] }
+tokio = "1.28.2"
 tokio-util = "0.7.8"
-is-terminal = { version = "0.4.7", optional = true }
-indicatif = { version = "0.17.3", optional = true }

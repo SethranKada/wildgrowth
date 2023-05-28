@@ -1,13 +1,13 @@
 #![allow(unused)]
 mod commands;
-
-use crate::start;
 use commands as arguments;
+use api::start_instance;
+
 use std::time::Duration;
-use clap::{Parser, Subcommand,ValueEnum};
 use tokio::{signal, select, io::stdin, time::sleep};
 use tokio::sync::mpsc::{channel, Sender};
 use tokio_util::sync::CancellationToken;
+use clap::{Parser, Subcommand,ValueEnum};
 
 pub async fn begin_session() {
     let cli = arguments::Cli::parse();
@@ -16,7 +16,7 @@ pub async fn begin_session() {
 
     println!("Creating tasks");
     for i in 0..10 {
-        tokio::spawn(start(
+        tokio::spawn(start_instance(
             i,
             send.clone(),
             token.child_token()));

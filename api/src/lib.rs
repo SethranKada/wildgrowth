@@ -1,21 +1,19 @@
 #![allow(unused)]
 #[cfg(feature = "net")]
 pub mod net;
+
 #[cfg(feature = "user")]
 pub mod user;
-#[cfg(feature = "cli")]
-pub mod cli;
 
 pub mod db;
 
 use std::time::Duration;
-use clap::{Parser, Subcommand,ValueEnum};
 use tokio::{signal, select, time::sleep};
 use tokio::sync::mpsc::{channel, Sender};
 use tokio_util::sync::CancellationToken;
 
 
-pub async fn start(i: u64, _sender: Sender<()>, token:CancellationToken) {
+pub async fn start_instance(i: u64, _sender: Sender<()>, token:CancellationToken) {
     tokio::select! {
         _ = token.cancelled() => {
             sleep(Duration::from_millis(100 * i)).await;
