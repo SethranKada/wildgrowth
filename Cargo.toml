@@ -1,22 +1,8 @@
-[package]
-name = "wildgrowth-server"
-edition.workspace = true
-version.workspace = true
-authors.workspace = true
-repository.workspace = true
-
-[dependencies]
-api.workspace = true
-cli.workspace = true
-tokio = "1.28.2"
-tokio-util = "0.7.8"
-web.workspace = true
-
 [workspace]
 members = [
-	"api",
-	"web",
-	"cli"
+	"wildgrowth_api",
+	"wildgrowth_cli",
+	"wildgrowth_server"
 ]
 
 [workspace.package]
@@ -27,7 +13,8 @@ repository = "github.com/SethranKada/wildgrowth.git"
 
 
 [workspace.dependencies]
-api = {path = "../wildgrowth-server/api"}
-cli = {path = "../wildgrowth-server/cli"}
-web = {path = "../wildgrowth-server/web"}
+wildgrowth_api = {path = "../wildgrowth/wildgrowth_api"}
+wildgrowth_cli = {path = "../wildgrowth/wildgrowth_cli"}
+wildgrowth_web = {path = "../wildgrowth/wildgrowth_web"}
+wildgrowth_server = {path = "../wildgrowth/wildgrowth_server"}
 
