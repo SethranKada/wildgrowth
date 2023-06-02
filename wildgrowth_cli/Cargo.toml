@@ -1,15 +1,18 @@
 [package]
-name = "web"
+name = "wildgrowth_cli"
 edition.workspace = true
 version.workspace = true
 authors.workspace = true
 repository.workspace = true
 
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-api = {path = "../api"}
+anyhow = "1.0.71"
+wildgrowth_api.workspace = true
+clap = {version = "4.3.0", features = ["derive"]}
 exitcode = "1.1.2"
 serde = { version = "1.0.163", features = ["derive"] }
-tokio = "1.28.2"
+tokio = {version = "1.28.2", features = ["full"]}
 tokio-util = "0.7.8"

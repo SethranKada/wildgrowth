@@ -4,6 +4,7 @@
         "indicatif",
         "OSERR",
         "Signin",
-        "surrealdb"
+        "surrealdb",
+        "wildgrowth"
     ]
 }
