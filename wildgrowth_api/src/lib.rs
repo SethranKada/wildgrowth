@@ -7,31 +7,71 @@ pub mod user;
 
 pub mod db;
 
-use std::time::Duration;
-use tokio::{signal, select, time::sleep};
-use tokio::sync::mpsc::{channel, Sender};
+use std::any::Any;
+use std::future::Future;
+use std::pin::Pin;
+use std::sync::Arc;
+use tokio::sync::{oneshot, Mutex};
+use tokio::task;
+use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
 
+pub struct Instance {
+    config: Arc<Mutex<user::Config>>,
+    task: Option<JoinHandle<()>>,
+    token: CancellationToken,
+}
 
-pub async fn start_instance(i: u64, _sender: Sender<()>, token:CancellationToken) {
-    tokio::select! {
-        _ = token.cancelled() => {
-            sleep(Duration::from_millis(100 * i)).await;
-            println!("Task {} shutting down.", i);
+impl Instance {
+    pub async fn start(config: user::Config) -> Self {
+        println!("instance started!");
+
+        let token = CancellationToken::new();
+        let token_clone = token.clone();
+
+        let config = Arc::new(Mutex::new(config));
+        let config_clone = Arc::clone(&config);
+
+        let task = tokio::spawn(async move {
+            Self::run(token_clone, config_clone).await;
+        });
+
+        Instance {
+            config,
+            task: Some(task),
+            token,
         }
-        _ = tokio::time::sleep(std::time::Duration::from_secs(i)) => {
-            println!("Task {} took too long", i);
-            token.cancel();
+    }
+
+    async fn run(token: CancellationToken, config: Arc<Mutex<user::Config>>) {
+        loop {
+            if token.is_cancelled() {
+                break;
+            }
+            let config = config.lock().await;
+
+            println!("Instance '{}' is Running...", config.id);
+            drop(config);
+
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+        }
+        println!("Terminated");
+    }
+
+    pub async fn stop(mut self) {
+        self.token.cancel();
+        if let Some(task) = self.task.take() {
+            task.await.expect("Failed to join task");
         }
     }
 }
 
-pub async fn status() {}
-
-pub async fn create_account() {}
-
-pub async fn delete_account() {}
-
-pub async fn clear_cache() {}
-
-pub async fn remove_data() {}
+impl Drop for Instance {
+    fn drop(&mut self) {
+        self.token.cancel();
+        if let Some(task) = self.task.take() {
+            // Cancel the task
+            task.abort();
+        }
+    }
+}
