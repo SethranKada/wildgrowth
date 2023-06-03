@@ -16,5 +16,5 @@ exitcode = "1.1.2"
 serde = { version = "1.0.163", features = ["derive"] }
 tokio = {version = "1.28.2", features = ["full"]}
 tokio-util = "0.7.8"
-confy.workspace = true
 directories-next.workspace = true
+uuid.workspace = true
