@@ -1,83 +1,109 @@
-use clap::{Parser, Subcommand,ValueEnum};
-
+use clap::*;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
-    /// Turn debugging information on
-    #[arg(long)]
-    debug: bool,
-
-    /// Extra info for the beginners.
+    /// Extra info for debugging.
     #[arg(short, long)]
-    verbose: bool,
+    pub verbose: bool,
 
-    /// silence non-error messages
+    /// Silence non-error messages.
     #[arg(short, long)]
-    quiet: bool,
+    pub quiet: bool,
 
+    /// Specify the command to execute.
     #[command(subcommand)]
-    command: Option<Commands>,
+    pub command: Commands,
 }
 
 #[derive(Subcommand)]
 pub enum Commands {
-    /// initialize instance and create config file
-    Init {
-        /// Turn debugging information on
-        #[arg(long)]
-        debug: bool,
-
-        /// Extra info for the beginners
-        #[arg(short, long)]
-        verbose: bool,
-
-        /// silence non-error messages
-        #[arg(short, long)]
-        quiet: bool,
+    Configure {
+        #[command(subcommand)]
+        command: Configure,
     },
 
-    /// check whether your node is functioning properly
-    Status {
-        /// Turn debugging information on
-        #[arg(long)]
-        debug: bool,
-
-        /// extra info for beginners
-        #[arg(short, long)]
-        verbose: bool,
+    /// Manage peers and their interactions.
+    Peers {
+        #[command(subcommand)]
+        command: Peers,
     },
 
-    /// reset instance to a fresh install
-    Clean {
-        /// Turn debugging information on
-        #[arg(long)]
-        debug: bool,
-
-        /// Extra info for the beginners
-        #[arg(short, long)]
-        verbose: bool,
-
-        /// silence non-error messages
-        #[arg(short, long)]
-        quiet: bool,
-
-        /// reset everything to a fresh install
-        #[arg(value_enum)]
-        mode: CleanMode,
+    /// Allows you to manage your various content,
+    /// such as publishing or downloading.
+    Content {
+        #[command(subcommand)]
+        command: Content,
     },
 
+    Events {
+        #[command(subcommand)]
+        command: Events,
+    },
 
+    /// Exchange messages with other users or systems
+    Message {
+        #[command(subcommand)]
+        command: Message,
+    },
+
+    /// Debugging utilities for advanced users.
+    Debug {
+        #[command(subcommand)]
+        command: Debug,
+    },
 }
 
-#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
-pub enum CleanMode {
-    /// only reset user settings
-    Settings,
-    /// only clear cache
-    Cache,
-    /// only remove non-essential files
-    Data,
-    /// reset everything
-    All
+#[derive(Subcommand)]
+pub enum Configure {
+    Reset {
+        #[command(subcommand)]
+        command: Reset,
+    },
+}
+
+#[derive(Subcommand)]
+pub enum Reset {
+    All {},
+
+    Settings {},
+}
+
+#[derive(Subcommand)]
+pub enum Peers {
+    Add { new_peers: Vec<uuid::Uuid> },
+
+    Remove {},
+
+    List {},
+}
+
+#[derive(Subcommand)]
+pub enum Content {
+    Publish {},
+
+    Upload {},
+
+    Get {},
+
+    Pin {},
+}
+
+#[derive(Subcommand)]
+pub enum Events {}
+
+#[derive(Subcommand)]
+pub enum Message {
+    Send {},
+}
+
+#[derive(Subcommand)]
+pub enum Debug {
+    /// Start a detached debugging session.
+    StartDetachedSession {
+        #[arg(short, long)]
+        verbose: bool, // Enable verbose output for the debugging session.
+        #[arg(short, long)]
+        quiet: bool, // Silence non-error messages during the session.
+    },
 }

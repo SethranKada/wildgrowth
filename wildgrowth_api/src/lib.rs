@@ -15,6 +15,7 @@ use tokio::sync::{oneshot, Mutex};
 use tokio::task;
 use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
+use uuid::Uuid;
 
 pub struct Instance {
     config: Arc<Mutex<user::Config>>,
@@ -49,11 +50,11 @@ impl Instance {
                 break;
             }
             let config = config.lock().await;
-
-            println!("Instance '{}' is Running...", config.id);
+            let id: Uuid = config.id;
+            println!("Instance '{}' is Running...", id);
             drop(config);
 
-            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
         }
         println!("Terminated");
     }
