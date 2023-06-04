@@ -1,9 +1,10 @@
 use tokio::signal;
+use uuid::Uuid;
 use wildgrowth_api::{user::Config, Instance};
 
 pub async fn start() {
     // load config from file, or use a default if none is found.
-    let config: Config = Config::default();
+    let config = Config::get().await;
     // create a new instance
     let instance = Instance::start(config).await;
 
@@ -20,7 +21,7 @@ pub async fn start() {
 }
 
 pub async fn list_peers() {
-    let config: Config = Config::default();
+    let config = Config::get().await;
     println!("Peers:");
     if let Some(peers) = config.peers {
         for peer in peers {
@@ -32,7 +33,7 @@ pub async fn list_peers() {
 }
 
 pub async fn add_peers(mut new_peers: Vec<uuid::Uuid>) {
-    let mut config: Config = Config::default();
+    let mut config = Config::get().await;
 
     println!("Adding Peers:");
     for peer in &new_peers {
@@ -42,7 +43,9 @@ pub async fn add_peers(mut new_peers: Vec<uuid::Uuid>) {
     if let Some(mut peers) = config.peers {
         peers.append(&mut new_peers);
         config.peers = Some(peers);
+        config.save().await;
     } else {
         config.peers = Some(new_peers);
+        config.save().await;
     }
 }

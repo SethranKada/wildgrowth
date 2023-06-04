@@ -10,7 +10,6 @@ mod arguments;
 use arguments::*;
 mod actions;
 use actions::*;
-use wildgrowth_api::user::Config;
 
 #[tokio::main]
 async fn main() {
