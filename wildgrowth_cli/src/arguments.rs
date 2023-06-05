@@ -18,9 +18,9 @@ pub struct Cli {
 
 #[derive(Subcommand)]
 pub enum Commands {
-    Configure {
+    Config {
         #[command(subcommand)]
-        command: Configure,
+        command: Config,
     },
 
     /// Manage peers and their interactions.
@@ -55,7 +55,7 @@ pub enum Commands {
 }
 
 #[derive(Subcommand)]
-pub enum Configure {
+pub enum Config {
     Reset {
         #[command(subcommand)]
         command: Reset,
@@ -73,7 +73,7 @@ pub enum Reset {
 pub enum Peers {
     Add { new_peers: Vec<uuid::Uuid> },
 
-    Remove {},
+    Remove { old_peers: Vec<uuid::Uuid> },
 
     List {},
 }
@@ -106,4 +106,6 @@ pub enum Debug {
         #[arg(short, long)]
         quiet: bool, // Silence non-error messages during the session.
     },
+
+    GenerateRandomID {},
 }

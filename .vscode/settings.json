@@ -8,5 +8,6 @@
         "Signin",
         "surrealdb",
         "wildgrowth"
-    ]
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }

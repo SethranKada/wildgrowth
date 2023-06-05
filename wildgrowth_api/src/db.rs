@@ -1,5 +1,5 @@
 #![allow(unused)]
+use crate::user;
+use serde::{Deserialize, Serialize};
 
-async fn install() {
-    
-}
+pub async fn start(config: user::Config) {}

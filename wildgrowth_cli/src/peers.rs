@@ -1,24 +1,5 @@
-use tokio::signal;
 use uuid::Uuid;
-use wildgrowth_api::{user::Config, Instance};
-
-pub async fn start() {
-    // load config from file, or use a default if none is found.
-    let config = Config::get().await;
-    // create a new instance
-    let instance = Instance::start(config).await;
-
-    // pause this thread and do nothing, waiting until ctrl_c is pressed
-    tokio::select! {
-        _ = signal::ctrl_c() => {
-            // stop the instance and then execute it
-            instance.stop().await;
-            println!("Done!");
-            // exit program with the all clear that nothing went wrong
-            std::process::exit(exitcode::OK);
-        },
-    }
-}
+use wildgrowth_api::user::Config;
 
 pub async fn list_peers() {
     let config = Config::get().await;
@@ -43,9 +24,26 @@ pub async fn add_peers(mut new_peers: Vec<uuid::Uuid>) {
     if let Some(mut peers) = config.peers {
         peers.append(&mut new_peers);
         config.peers = Some(peers);
+        config.clean().await;
         config.save().await;
     } else {
         config.peers = Some(new_peers);
+        config.clean().await;
         config.save().await;
     }
+}
+
+pub async fn remove_peers(mut old_peers: Vec<uuid::Uuid>) {
+    let mut config = Config::get().await;
+    let Some(mut peers) = config.peers else {
+        return;
+    };
+    println!("Removing Peers:");
+    peers.retain(|x| !old_peers.contains(x));
+    for peer in old_peers {
+        println!("{}", peer);
+    }
+    config.peers = Some(peers);
+    config.clean().await;
+    config.save().await;
 }

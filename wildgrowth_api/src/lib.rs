@@ -1,11 +1,7 @@
 #![allow(unused)]
-#[cfg(feature = "net")]
-pub mod net;
-
-#[cfg(feature = "user")]
-pub mod user;
-
 pub mod db;
+pub mod net;
+pub mod user;
 
 use std::any::Any;
 use std::future::Future;
@@ -56,7 +52,6 @@ impl Instance {
 
             tokio::time::sleep(std::time::Duration::from_millis(500)).await;
         }
-        println!("Terminated");
     }
 
     pub async fn stop(mut self) {
