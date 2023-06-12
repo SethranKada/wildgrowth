@@ -8,8 +8,12 @@ use tokio::{io::stdin, select, signal, time::sleep};
 
 mod arguments;
 use arguments::*;
-mod actions;
-use actions::*;
+mod peers;
+use peers::*;
+mod debug;
+use debug::*;
+mod config;
+use config::*;
 
 #[tokio::main]
 async fn main() {
@@ -17,15 +21,15 @@ async fn main() {
     let cli = arguments::Cli::parse();
 
     match &cli.command {
-        Commands::Configure { command } => match command {
-            Configure::Reset { command } => match command {
-                Reset::All {} => {}
+        Commands::Config { command } => match command {
+            Config::Reset { command } => match command {
+                Reset::All {} => config::reset_all().await,
                 Reset::Settings {} => {}
             },
         },
         Commands::Peers { command } => match command {
             Peers::Add { new_peers } => add_peers(new_peers.clone()).await,
-            Peers::Remove {} => {}
+            Peers::Remove { old_peers } => remove_peers(old_peers.clone()).await,
             Peers::List {} => list_peers().await,
         },
         Commands::Content { command } => match command {
@@ -37,7 +41,8 @@ async fn main() {
         Commands::Events { command } => {}
         Commands::Message { command } => {}
         Commands::Debug { command } => match command {
-            Debug::StartDetachedSession { verbose, quiet } => start().await,
+            Debug::StartDetachedSession { verbose, quiet } => start(verbose, quiet).await,
+            Debug::GenerateRandomID {} => generate_random_id().await,
         },
     }
 }
